@@ -2,6 +2,7 @@ package bases
 
 import (
 	"strconv"
+	"strings"
 )
 
 func BinaryToDecimal(in string) string {
@@ -24,7 +25,37 @@ func DecimalToBinary(in string) string {
 	// Transfrom the decimal format string representation of a number to its binary format string
 	// representation
 
-	var res string
+	var sb strings.Builder
 
-	return "1"
+	// Find the smallest n s.t. 2^n+1 > x
+	x, err := strconv.Atoi(in)
+	if err != nil {
+		panic(err)
+	}
+	var maxExp int
+
+	// Could also do interval bisection to find this? Depends on if we want to care more about smaller inputs or not.
+	for (1 << maxExp) <= x {
+		maxExp += 1
+	}
+
+	var n int
+	if maxExp > 0 {
+		n = maxExp - 1
+	} else {
+		n = 0
+	}
+
+	for x > 0 || n >= 0 {
+		y := 1 << n
+		if y <= x {
+			x -= y
+			sb.WriteString("1")
+		} else {
+			sb.WriteString("0")
+		}
+		n -= 1
+	}
+
+	return sb.String()
 }
